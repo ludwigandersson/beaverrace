@@ -1,6 +1,5 @@
 package com.fatsquadent.beaverrace;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -125,17 +124,18 @@ public class BeaverRunner implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         switch (state) {
 
             case NOT_RUNNING:
-                if (Gdx.input.isTouched()) {
+                //if (Gdx.input.isTouched())
+                {
                     state = RunnerState.RUNNING;
                 }
                 break;
             case RUNNING:
-
+                Gdx.gl.glClearColor(1, 1, 1, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 stage.act(Gdx.graphics.getDeltaTime());
 
                 
@@ -143,9 +143,7 @@ public class BeaverRunner implements Screen {
                     if (a instanceof MyActor) {
                         if (a.getRight() >= (Gdx.graphics.getWidth()-beaverTreatWidth)) {
                             winner = (MyActor) a;
-                            gameMain.setGameEnd(winner.getId());
                             state = RunnerState.FINSIHED;
-
                             break;
                         }
                     }
@@ -153,12 +151,17 @@ public class BeaverRunner implements Screen {
                 break;
             case FINSIHED:
 
-                stage.act(Gdx.graphics.getDeltaTime());
+                gameMain.setGameEnd(winner.getId());
+               // stage.act(Gdx.graphics.getDeltaTime());
                 //table2.setVisible(true);
                 break;
             case PAUSED:
 
-                state = RunnerState.NOT_RUNNING;
+                //state = RunnerState.NOT_RUNNING;
+                if (Gdx.input.isTouched())
+                {
+                    state = RunnerState.RUNNING;
+                }
                 break;
         }
         stage.draw();

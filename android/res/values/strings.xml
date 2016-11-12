@@ -2,5 +2,10 @@
 <resources>
 
     <string name="app_name">BeaverRace</string>
+    <string name="title_activity_game_end">GameEndActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_game_start">GameStartActivity</string>
 
 </resources>
