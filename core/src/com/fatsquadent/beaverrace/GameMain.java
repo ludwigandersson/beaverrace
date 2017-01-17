@@ -15,11 +15,11 @@ public class GameMain extends Game  implements ApplicationListener {
 		this.callback = callback;
 	}
 
-	public void setGameEnd(int i) {
+	public void setGameEnd(BeaverActor beaver) {
 		/*this.gameEnd = new GameEnd(this);
 		gameEnd.setWinner(i);
 		setScreen(gameEnd);*/
-		callback.result(i);
+		callback.result(beaver);
 	}
 
 	public void setBeaverRunner()
@@ -64,5 +64,11 @@ public class GameMain extends Game  implements ApplicationListener {
 	@Override
 	public void resume() {
 		super.resume();
+	}
+
+	public void showEmbeddedGameEnd(int winner) {
+		this.gameEnd = new GameEnd(this);
+		gameEnd.setWinner(winner);
+		setScreen(gameEnd);
 	}
 }

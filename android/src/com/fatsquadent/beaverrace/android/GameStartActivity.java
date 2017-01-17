@@ -29,27 +29,18 @@ public class GameStartActivity extends Activity {
             }
         });
 
-        textView = (TextView)findViewById(R.id.textView);
+        textView = (TextView)findViewById(R.id.tvWinnerMsg);
+        startButton.setText("Känn över't!");
 
-        Intent intent = getIntent();
-        if (intent.getExtras() != null) {
-            int winner = intent.getExtras().getInt("winner");
-            textView.setText(String.format("Störst ölsug hade bäwer #%d",winner));
-            startButton.setText("Känn över't igen!");
-            //android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            super.setTheme(android.R.style.Theme_Translucent_NoTitleBar);
-        } else {
-            startButton.setText("Race!");
-        }
 
         super.onCreate(savedInstanceState);
     }
 
-    @Override
+/*    @Override
     public void setTheme(int resid) {
         boolean changeTheme = true;
         super.setTheme(changeTheme ? android.R.style.Theme_Translucent_NoTitleBar : resid);
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -6,6 +6,7 @@ import android.widget.Button;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.fatsquadent.beaverrace.BeaverActor;
 import com.fatsquadent.beaverrace.GameController;
 import com.fatsquadent.beaverrace.GameMain;
 
@@ -20,9 +21,14 @@ public class GameLauncher extends AndroidApplication implements GameController {
 	}
 
     @Override
-    public void result(int winner) {
-        Intent intent = new Intent(this, GameStartActivity.class);
-        intent.putExtra("winner", winner);
+    public void result(BeaverActor beaver) {
+        Intent intent = new Intent(this, GameEndActivity.class);
+        intent.putExtra("winner", beaver.getId());
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
     }
 }

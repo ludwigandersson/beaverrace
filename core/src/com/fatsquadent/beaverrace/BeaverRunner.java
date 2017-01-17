@@ -3,13 +3,10 @@ package com.fatsquadent.beaverrace;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -19,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
  * Created by ludde on 6/15/15.
  */
 public class BeaverRunner implements Screen {
+
+    private float beaverTreatX = 0f;
 
     private enum RunnerState { NOT_RUNNING, RUNNING, FINSIHED, PAUSED}
 
@@ -35,65 +34,60 @@ public class BeaverRunner implements Screen {
 
 
 
-    public class MyActor extends Actor {
 
-        Texture texture = new Texture(Gdx.files.internal("beaver.jpg"));
-        public boolean started = false;
-        private int id;
-
-        public MyActor(int id){
-            this.id = id;
-            setBounds(getX(),getY(),texture.getWidth(),texture.getHeight());
-        }
-
-        @Override
-        public void draw(Batch batch, float alpha){
-            batch.draw(texture, this.getX(), getY());
-        }
-
-        public String getName()
-        {
-            return "Bäwer #"+id;
-        }
-
-        public int getId() {
-            return id;
-        }
-    }
     private Stage stage;
     private boolean running = true;
-    private MyActor winner = null;
+    private BeaverActor winner = null;
     private Table table2;
 
-    private Actor createBeaver(int i, float y, float speed)
+    private BeaverActor createBeaver(int i, float x, float y, float speed)
     {
-        MyActor myActor = new MyActor(i);
-        myActor.setPosition(0f, y);
+        System.out.println(String.format("Created beaver: %d, speed: %f", i, speed));
+        BeaverActor myActor = new BeaverActor(i, x, y, speed);
 
-
-        MoveToAction moveAction = new MoveToAction();
-        moveAction.setPosition(Gdx.graphics.getWidth() - myActor.getWidth(), y);
-        moveAction.setDuration(speed);
-        myActor.addAction(moveAction);
 
         return myActor;
     }
+
+    public int calcWinner() {
+        int slowestBeaver = -1;
+        float topspeed = 40f;
+        for (int i=1; i <7; i++) {
+            float speed = 4f + (float) Math.random();
+            if (speed < topspeed) {
+                topspeed = speed;
+                slowestBeaver = i;
+            }
+        }
+
+        return slowestBeaver;
+    }
+
     @Override
     public void show () {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
+        float height = Gdx.graphics.getHeight()/6f;
 
-
-        float height = Gdx.graphics.getHeight()/6f+5;
-
-
+        BeaverActor slowestBeaver = null;
         for (int i=0; i <6; i++) {
             // int speed = Math.Random(40,55);
-            stage.addActor(createBeaver(6-i, i * height, 4f+(float)Math.random()));
-            BeaverTreat t = new BeaverTreat(Gdx.graphics.getWidth(), i * (int)height);
+            BeaverActor ba = createBeaver(6-i, Gdx.graphics.getWidth()*0.05f, i * height, 4f+(float)Math.random());
+            //if (slowestBeaver == null || ba.getSpeed() > slowestBeaver.getSpeed())
+            //    slowestBeaver = ba;
+
+            stage.addActor(ba);
+
+
+
+            BeaverTreat t = new BeaverTreat((int)(Gdx.graphics.getWidth()*0.97), i * (int)height);
             beaverTreatWidth = t.getWidth();
+            beaverTreatX = t.getX();
             stage.addActor(t);
         }
+
+        if (slowestBeaver != null)
+            slowestBeaver.setSlowStarting(true);
         
         table2 = new Table();
         table2.setVisible(false);
@@ -134,24 +128,29 @@ public class BeaverRunner implements Screen {
                 }
                 break;
             case RUNNING:
-                Gdx.gl.glClearColor(1, 1, 1, 1);
-                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-                stage.act(Gdx.graphics.getDeltaTime());
-
-                
                 for (Actor a : stage.getActors()) {
-                    if (a instanceof MyActor) {
-                        if (a.getRight() >= (Gdx.graphics.getWidth()-beaverTreatWidth)) {
-                            winner = (MyActor) a;
+                    if (a instanceof BeaverActor) {
+                        BeaverActor b = (BeaverActor)a;
+                        if ((a.getRight()+2*b.getSpeed())>= beaverTreatX) {
+                            winner = (BeaverActor) a;
                             state = RunnerState.FINSIHED;
                             break;
                         }
+                        if (b.isSlowStarting() && b.getRight() > beaverTreatX*0.5) {
+                            b.boost();
+                        }
                     }
                 }
+
+
+                // Draw next position
+                Gdx.gl.glClearColor(1, 1, 1, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                stage.act(Gdx.graphics.getDeltaTime());
                 break;
             case FINSIHED:
 
-                gameMain.setGameEnd(winner.getId());
+                gameMain.setGameEnd(winner);
                // stage.act(Gdx.graphics.getDeltaTime());
                 //table2.setVisible(true);
                 break;

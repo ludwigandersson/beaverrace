@@ -1,6 +1,5 @@
 package com.fatsquadent.beaverrace;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -9,14 +8,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 /**
  * Created by ludde on 6/15/15.
  */
 public class GameEnd implements Screen {
-    String scoreTxt = "Störst ölsug hade bäwer #";
-    String scoreTxt2 = " och tilldelas därför sex välkylda";
+    String scoreTxt = "Mest ölsug hade Bäwer #";
+    String scoreTxt2 = " och tilldelas därför sex väl kylda";
     Stage stage;
     SpriteBatch batch;
     BitmapFont font;
